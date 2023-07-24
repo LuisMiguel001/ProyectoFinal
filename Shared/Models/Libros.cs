@@ -13,16 +13,18 @@ public class Libros
 
 	public int LibroId { get; set; }
 
-	public string? Imgen { get; set; }
-
-	[Required(ErrorMessage = "La Puntuacion es un campo requerido")]
-	public int Puntuacion { get; set; }
+	public byte[]? Imagen { get; set; }
 
 	[Required(ErrorMessage = "El Titulo es un campo requerido")]
 	public string? Titulo { get; set; }
 
-	public DateTime Fecha { get; set; } = DateTime.Today;
-
 	[Required(ErrorMessage = "El Email es un campo requerido")]
 	public string? Email { get; set; }
+
+	public DateTime Fecha { get; set; } = DateTime.Today;
+
+	[Required(ErrorMessage = "La Puntuacion es un campo requerido")]
+	public int Puntuacion { get; set; }
+
+	public string? Resena { get; set; }
 }
