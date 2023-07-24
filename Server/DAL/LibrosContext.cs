@@ -10,4 +10,3 @@ public class LibrosContext : DbContext
 
 	public DbSet<Libros> Libros { get; set; }
 }
-
