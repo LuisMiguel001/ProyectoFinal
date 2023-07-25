@@ -1,6 +1,8 @@
 ﻿@page "/Libro"
 @page "/Libro/{LibroId:int}"
 @inject HttpClient httpClient
+@using Newtonsoft.Json;
+@using System.Text;
 
 <EditForm Model="libro" OnValidSubmit="Guardar">
 	<DataAnnotationsValidator />
@@ -25,35 +27,43 @@
 					</div>
 				</div>
 
-				@*LibroId*@
+				@*Imagen*@
 				@*<div class="mb-3">
-					<label class="form-label">Libro ID</label>
-					<InputNumber @bind-Value="libro.LibroId" class="form-control" />
-					<ValidationMessage For="@(() => libro.LibroId)" />
+				<label class="form-label">Agregar Imagen</label>
+				<input type="file" OnChange="OnChange" class="form-control" />
+				@if (libro.Imagen != null)
+				{
+				<img src="@libro.Imagen" alt="Imagen del Libro" />
+				}
 				</div>*@
 
 				@*Imagen*@
-				@*<div class="mb-3">
-					<label class="form-label">Agregar Imagen</label>
-					<input type="file" OnChange="OnChange" class="form-control" />
-					@if (libro.Imagen != null)
-					{
-						<img src="@libro.Imagen" alt="Imagen del Libro" />
-					}
-				</div>*@
-
-				@*Imagen*@
-				<div class="contenedor-destino-arrastre @claseEncima" @ondragenter="OnDragEnter"
-					 @ondragover="OnDragEnter" @ondragleave="OnDragLeave">
-					<InputFile multiple OnChange="OnChange"></InputFile>
+				@*<div class="contenedor-destino-arrastre @claseEncima" @ondragenter="OnDragEnter"
+				@ondragover="OnDragEnter" @ondragleave="OnDragLeave">
+				<InputFile multiple OnChange="OnChange"></InputFile>
 				</div>
 
 				<div class="contenedor-imagen">
-					@foreach (var imagen in imagenes)
-					{
-						<img src="@imagen" />
-					}
+				@foreach (var imagen in imagenes)
+				{
+				<img src="@imagen" />
+				}
+				</div>*@
+
+				<div class="input-group">
+					<div class="custom-file">
+						<InputFile class="custom-file-input" multiple OnChange="OnChange" accept="image/png, image/jpeg, image/gif" id="inputFile" />
+						<label class="custom-file-label" for="inputFile">Choose file</label>
+					</div>
+					<div class="input-group-append">
+						<button class="btn btn-success" @onclick="Upload" disabled="@isDisabled">Upload</button>
+					</div>
 				</div>
+
+				@foreach (var item in filesBase64)
+				{
+					<img src="data:@item.contentType;base64,@item.base64data" />
+				}
 
 				<br>
 
@@ -138,7 +148,7 @@
 	public int LibroId { get; set; }
 	public Libros libro { get; set; } = new Libros();
 
-	public List<byte[]> imagenes { get; set; } = new List<byte[]>();
+	//public List<byte[]> imagenes { get; set; } = new List<byte[]>();
 	private const int tamañoMaximoArchivo = 2 * 1024 * 1024;
 	private string claseEncima = string.Empty;
 
@@ -147,17 +157,68 @@
 	void OnDragEnter(DragEventArgs e) => claseEncima = "hover";
 	void OnDragLeave(DragEventArgs e) => claseEncima = string.Empty;
 
-	public async Task OnChange(InputFileChangeEventArgs e)
+	List<Imagenes> filesBase64 = new List<Imagenes>();
+	string message = "InputFile";
+	bool isDisabled = false;
+
+	async Task OnChange(InputFileChangeEventArgs e)
 	{
-		foreach (var archivo in e.GetMultipleFiles())
+		var files = e.GetMultipleFiles();
+		foreach (var file in files)
 		{
-			using var stream = archivo.OpenReadStream(tamañoMaximoArchivo);
-			using var ms = new MemoryStream();
-			await stream.CopyToAsync(ms);
-			byte[] byteArray = ms.ToArray();
-			imagenes.Add(byteArray);
+			var resizedFile = await file.RequestImageFileAsync(file.ContentType, 640, 480);
+			var buf = new byte[resizedFile.Size];
+			using (var stream = resizedFile.OpenReadStream())
+			{
+				await stream.ReadAsync(buf);
+			}
+			filesBase64.Add(new Imagenes { base64data = Convert.ToBase64String(buf), contentType = file.ContentType, fileName = file.Name });
+		}
+		message = "Click UPLOAD para continuar";
+	}
+
+	async Task Upload()
+	{
+		isDisabled = true;
+		var json = JsonConvert.SerializeObject(filesBase64); // Serializa la lista de Imagenes a JSON
+		var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+		using (var msg = await httpClient.PostAsync("/api/Imagenes", content)) // Envía la solicitud POST a tu API
+		{
+			isDisabled = false;
+			if (msg.IsSuccessStatusCode)
+			{
+				message = $"{filesBase64.Count} files uploaded";
+				filesBase64.Clear();
+			}
 		}
 	}
+
+	//async Task Upload()
+	//{
+	//	isDisabled = true;
+	//	using (var msg = await httpClient.PostAsJsonAsync<List<Imagenes>>("/api/Imagenes", filesBase64, System.Threading.CancellationToken.None))
+	//	{
+	//		isDisabled = false;
+	//		if (msg.IsSuccessStatusCode)
+	//		{
+	//			message = $"{filesBase64.Count} files uploaded";
+	//			filesBase64.Clear();
+	//		}
+	//	}
+	//}
+
+	//public async Task OnChange(InputFileChangeEventArgs e)
+	//{
+	//	foreach (var archivo in e.GetMultipleFiles())
+	//	{
+	//		using var stream = archivo.OpenReadStream(tamañoMaximoArchivo);
+	//		using var ms = new MemoryStream();
+	//		await stream.CopyToAsync(ms);
+	//		byte[] byteArray = ms.ToArray();
+	//		imagenes.Add(byteArray);
+	//	}
+	//}
 
 	//async Task OnChange(InputFileChangeEventArgs e)
 	//{
@@ -259,7 +320,7 @@
 			else
 			{
 				Nuevo();
-				Mensaje = "Se ha eliminado correctamente";				
+				Mensaje = "Se ha eliminado correctamente";
 			}
 		}
 	}

@@ -11,7 +11,7 @@ using ProyectoFinal.Server.DAL;
 namespace ProyectoFinal.Server.Migrations
 {
     [DbContext(typeof(LibrosContext))]
-    [Migration("20230723230541_Inicial")]
+    [Migration("20230725030121_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
