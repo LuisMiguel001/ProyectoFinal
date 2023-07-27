@@ -21,7 +21,7 @@ public class LibrosController : ControllerBase
 	}
 
 	[HttpGet]
-	public async Task<ActionResult<IEnumerable<Libros>>> GetProducto()
+	public async Task<ActionResult<IEnumerable<Libros>>> GetLibros()
 	{
 		if (_context.Libros == null)
 		{
@@ -49,47 +49,7 @@ public class LibrosController : ControllerBase
 		return libro;
 	}
 
-	//[HttpPost]
-	//public ViewResult PostLibros(Libros libro, HttpPostedFileBase upload)
-	//{
-	//	try
-	//	{
-	//		if (upload != null && upload.ContentLength > 0)
-	//		{
-	//			byte[]? imagenCarga = null;
-	//			using (var imagen = new BinaryReader(upload.InputStream))
-	//			{
-	//				imagenCarga = imagen.ReadBytes(upload.ContentLength);
-	//			}
-	//			libro.Imagen = imagenCarga;
-	//		}
-	//		if (!Existe(libro.LibroId))
-	//			_context.Libros.Add(libro);
-	//		else
-	//			_context.Libros.Update(libro);
-	//	}
-	//	catch (RetryLimitExceededException /* dex */)
-	//	{
-	//		ModelState.AddModelError("", "Error");
-	//	}
-	//	return View();
-	//}
-
-	//public Task<ActionResult> ConvertirImagenAsync(int libroid)
-	//{
-	//	var imagen = (from Libros in _context.Libros
-	//				  where Libros.LibroId == libroid
-	//				  select Libros).FirstOrDefault();
-
-	//	return Task.FromResult<ActionResult>(File(imagen.Imagen, "Imagenes/jpg"));
-	//}
-
-	//private ViewResult View()
-	//{
-	//	return View();
-	//}
-
-
+    [HttpPost]
 	public async Task<ActionResult<Libros>> PostLibros(Libros libro)
 	{
 		if (!Existe(libro.LibroId))

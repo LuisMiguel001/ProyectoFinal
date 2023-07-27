@@ -11,7 +11,7 @@ using ProyectoFinal.Server.DAL;
 namespace ProyectoFinal.Server.Migrations
 {
     [DbContext(typeof(LibrosContext))]
-    [Migration("20230725030121_Inicial")]
+    [Migration("20230726210730_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -26,6 +26,14 @@ namespace ProyectoFinal.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Clave")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Correo")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -36,10 +44,19 @@ namespace ProyectoFinal.Server.Migrations
                     b.Property<byte[]>("Imagen")
                         .HasColumnType("BLOB");
 
+                    b.Property<string>("Link")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nombre")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("Puntuacion")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Resena")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Rol")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Titulo")

@@ -22,7 +22,12 @@ namespace ProyectoFinal.Server.Migrations
                     Email = table.Column<string>(type: "TEXT", nullable: false),
                     Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Puntuacion = table.Column<int>(type: "INTEGER", nullable: false),
-                    Resena = table.Column<string>(type: "TEXT", nullable: true)
+                    Resena = table.Column<string>(type: "TEXT", nullable: true),
+                    Link = table.Column<string>(type: "TEXT", nullable: true),
+                    Correo = table.Column<string>(type: "TEXT", nullable: false),
+                    Clave = table.Column<string>(type: "TEXT", nullable: false),
+                    Nombre = table.Column<string>(type: "TEXT", nullable: true),
+                    Rol = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

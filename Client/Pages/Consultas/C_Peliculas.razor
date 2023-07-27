@@ -1,11 +1,11 @@
-﻿@page "/c_libro"
+﻿@page "/c_pelicula"
 @inject HttpClient httpClient
 @*@using Microsoft.AspNetCore.Authorization;
 @attribute [Authorize]
 *@
 <div class="card">
 	<div class="card-header">
-		<h3 class="card align-items-center">Consulta de Libros</h3>
+		<h3 class="card align-items-center">Consulta de Peliculas</h3>
 	</div>
 
 	<div class="card-body">
@@ -14,7 +14,7 @@
 				<i class="oi oi-magnifying-glass " />
 			</button>
 		</div>
-		@if (Libro is not null)
+		@if (Pelicula is not null)
 		{
 			<table class="table table-striped table-hover">
 				<thead>
@@ -25,11 +25,11 @@
 						<th>Fecha</th>
 						<th>Puntuaci&oacuten</th>
 						<th>Rese&ntildea</th>
-						<th>Link</th>
+						<th>Trailer</th>
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (var libro in Libro)
+					@foreach (var libro in Pelicula)
 					{
 						<tr>
 							<img src="data:@libro.Imagen" />
@@ -40,8 +40,8 @@
 							<td>@libro.Fecha.ToString("dd/MM/yyyy")</td>
 							<td>@libro.Puntuacion</td>
 							<td>@libro.Resena</td>
-							<td>@libro.Link</td>
-							<td><a href="Libro/@libro.LibroId">Ver</a></td>
+							<td>@libro.Trailer</td>
+							<td><a href="Libro/@libro.PelicualId">Ver</a></td>
 						</tr>
 					}
 				</tbody>
@@ -60,14 +60,14 @@
 </div>
 
 @code {
-	public List<Libros>? Libro { get; set; }
+	public List<Peliculas>? Pelicula { get; set; }
 	public int conteo { get; set; }
 
 	public async Task Buscar()
 	{
-		Libro = await httpClient.GetFromJsonAsync<List<Libros>>($"api/Libros");
+		Pelicula = await httpClient.GetFromJsonAsync<List<Peliculas>>($"api/Peliculas");
 
-		conteo = Libro != null ? Libro!.Count() : 0;
+		conteo = Pelicula != null ? Pelicula!.Count() : 0;
 		StateHasChanged();
 	}
 }

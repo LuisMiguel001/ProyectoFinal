@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 var ConStr = builder.Configuration.GetConnectionString("ConStr");
 builder.Services.AddDbContextFactory<LibrosContext>(options => options.UseSqlite(ConStr));
 
+var ConPel = builder.Configuration.GetConnectionString("ConPel");
+builder.Services.AddDbContextFactory<PeliculasContext>(options => options.UseSqlite(ConPel));
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

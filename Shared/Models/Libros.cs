@@ -27,4 +27,12 @@ public class Libros
 	public int Puntuacion { get; set; }
 
 	public string? Resena { get; set; }
+
+	public string? Link { get; set; }
+
+    [Required(ErrorMessage = "Debe ingrasar el correo")]
+    public string? Correo { get; set; }
+
+    [Required(ErrorMessage = "Debe ingresar la clave")]
+    public string? Clave { get; set; }
 }

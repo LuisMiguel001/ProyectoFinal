@@ -1,12 +1,12 @@
-﻿@page "/Libro"
-@page "/Libro/{LibroId:int}"
+﻿@page "/Pelicula"
+@page "/Pelicula/{PeliculaId:int}"
 @inject HttpClient httpClient
 @using Newtonsoft.Json;
 @using System.Text;
 @*@using Microsoft.AspNetCore.Authorization;
 @attribute [Authorize(Roles = "Administrador,Empleado")]*@
 
-<EditForm Model="libro" OnValidSubmit="Guardar">
+<EditForm Model="pelicula" OnValidSubmit="Guardar">
 	<DataAnnotationsValidator />
 
 	<div class="container">
@@ -14,7 +14,7 @@
 
 			@*Encabezado*@
 			<div class="card-header">
-				<h3 class="card align-items-center">Books</h3>
+				<h3 class="card align-items-center">Movies</h3>
 			</div>
 
 			<div class="card-body">
@@ -22,7 +22,7 @@
 				<div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
 					<label>Buscar Libro</label>
 					<div class="input-group mb-3">
-						<InputNumber @bind-Value="libro.LibroId" class="form-control" aria-describedby="buscarButton" />
+						<InputNumber @bind-Value="pelicula.PelicualId" class="form-control" aria-describedby="buscarButton" />
 						<button @onclick="Buscar" class="btn btn-outline-primary" type="button" id="buscarButton">
 							<i class="oi oi-magnifying-glass" />
 						</button>
@@ -33,9 +33,9 @@
 				<div class="mb-3">
 					<label class="form-label">Agregar Imagen</label>
 					<input type="file" OnChange="OnChange" class="form-control" />
-					@if (libro.Imagen != null)
+					@if (pelicula.Imagen != null)
 					{
-						<img src="@libro.Imagen" alt="Imagen del Libro" />
+						<img src="@pelicula.Imagen" alt="Imagen del Libro" />
 					}
 				</div>
 
@@ -72,8 +72,8 @@
 				<div class="col-md-15">
 					<div class="input-group">
 						<span class="input-group-text">T&iacutetulo</span>
-						<InputText @bind-Value="libro.Titulo" class="form-control"></InputText>
-						<ValidationMessage For="@(() =>libro.Titulo)" />
+						<InputText @bind-Value="pelicula.Titulo" class="form-control"></InputText>
+						<ValidationMessage For="@(() =>pelicula.Titulo)" />
 					</div>
 				</div>
 
@@ -85,8 +85,8 @@
 						<div Class="form-group">
 							<div class="input-group">
 								<span class="input-group-text">Email</span>
-								<InputText @bind-Value="libro.Email" class="form-control"></InputText>
-								<ValidationMessage For="@(() =>libro.Email)" />
+								<InputText @bind-Value="pelicula.Email" class="form-control"></InputText>
+								<ValidationMessage For="@(() =>pelicula.Email)" />
 							</div>
 						</div>
 					</div>
@@ -96,8 +96,8 @@
 						<div Class="form-group">
 							<div class="input-group">
 								<span class="input-group-text">Fecha</span>
-								<InputDate @bind-Value="libro.Fecha" class="form-control"></InputDate>
-								<ValidationMessage For="@(() =>libro.Fecha)" />
+								<InputDate @bind-Value="pelicula.Fecha" class="form-control"></InputDate>
+								<ValidationMessage For="@(() =>pelicula.Fecha)" />
 							</div>
 						</div>
 					</div>
@@ -110,8 +110,8 @@
 					<div Class="form-group">
 						<div class="input-group">
 							<span class="input-group-text">Rese&ntildea</span>
-							<InputTextArea @bind-Value="libro.Resena" class="form-control"></InputTextArea>
-							<ValidationMessage For="@(() => libro.Resena)" />
+							<InputTextArea @bind-Value="pelicula.Resena" class="form-control"></InputTextArea>
+							<ValidationMessage For="@(() => pelicula.Resena)" />
 						</div>
 					</div>
 				</div>
@@ -122,8 +122,8 @@
 						<div Class="form-group">
 							<div class="input-group">
 								<span class="input-group-text">Puntuaci&oacuten 1/10</span>
-								<InputNumber @bind-Value="libro.Puntuacion" class="form-control"></InputNumber>
-								<ValidationMessage For="@(() =>libro.Puntuacion)" />
+								<InputNumber @bind-Value="pelicula.Puntuacion" class="form-control"></InputNumber>
+								<ValidationMessage For="@(() =>pelicula.Puntuacion)" />
 							</div>
 						</div>
 					</div>
@@ -133,8 +133,8 @@
 						<div Class="form-group">
 							<div class="input-group">
 								<span class="input-group-text">Link</span>
-								<InputText @bind-Value="libro.Link" class="form-control"></InputText>
-								<ValidationMessage For="@(() =>libro.Link)" />
+								<InputText @bind-Value="pelicula.Trailer" class="form-control"></InputText>
+								<ValidationMessage For="@(() =>pelicula.Trailer)" />
 							</div>
 						</div>
 					</div>
@@ -159,8 +159,8 @@
 
 @code {
 	[Parameter]
-	public int LibroId { get; set; }
-	public Libros libro { get; set; } = new Libros();
+	public int PeliculaId { get; set; }
+	public Peliculas pelicula { get; set; } = new Peliculas();
 
 	public List<byte[]> imagenes { get; set; } = new List<byte[]>();
 	private const int tamañoMaximoArchivo = 2 * 1024 * 1024;
@@ -196,20 +196,20 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		if (LibroId > 0)
+		if (PeliculaId > 0)
 		{
-			this.libro.LibroId = LibroId;
+			this.pelicula.PelicualId = PeliculaId;
 			await Buscar();
 		}
 	}
 
 	public async Task Buscar()
 	{
-		var libroEncotrado = await httpClient.GetFromJsonAsync<Libros>($"api/Libros/{libro.LibroId}");
+		var peliculaEncotrado = await httpClient.GetFromJsonAsync<Peliculas>($"api/Peliculas/{pelicula.PelicualId}");
 
-		if (libroEncotrado != null)
+		if (peliculaEncotrado != null)
 		{
-			this.libro = libroEncotrado;
+			this.pelicula = peliculaEncotrado;
 			StateHasChanged();
 		}
 		else
@@ -220,17 +220,17 @@
 
 	public async Task Guardar()
 	{
-		using var response = await httpClient.PostAsJsonAsync("api/Libros", libro);
+		using var response = await httpClient.PostAsJsonAsync("api/Peliculas", pelicula);
 
 		if (Validar())
 		{
 			if (response.IsSuccessStatusCode)
 			{
-				var libroDevuelta = await response.Content.ReadFromJsonAsync<Libros>();
+				var peliculaDevuelta = await response.Content.ReadFromJsonAsync<Peliculas>();
 
-				if (libroDevuelta is not null)
+				if (peliculaDevuelta is not null)
 				{
-					this.libro = libroDevuelta;
+					this.pelicula = peliculaDevuelta;
 					Nuevo();
 					Mensaje = "Se guardo correctamente";
 				}
@@ -248,17 +248,17 @@
 
 	public void Nuevo()
 	{
-		this.libro = new Libros();
+		this.pelicula = new Peliculas();
 		Mensaje = string.Empty;
 	}
 
 	public bool Validar()
 	{
-		if (string.IsNullOrEmpty(libro.Titulo) || libro.LibroId < 0)
+		if (string.IsNullOrEmpty(pelicula.Titulo) || pelicula.PelicualId < 0)
 		{
 			return false;
 		}
-		if (libro.Fecha != DateTime.Today)
+		if (pelicula.Fecha != DateTime.Today)
 		{
 			Mensaje = "La fecha debe ser la de hoy";
 			return false;
@@ -271,7 +271,7 @@
 
 	public async Task Eliminar()
 	{
-		using var response = await httpClient.DeleteAsync($"api/Libros/{libro.LibroId}");
+		using var response = await httpClient.DeleteAsync($"api/Peliculas/{pelicula.PelicualId}");
 
 		if (Validar())
 		{
