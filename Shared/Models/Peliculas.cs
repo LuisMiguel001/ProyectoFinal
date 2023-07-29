@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ public class Peliculas
 {
     [Key]
 
-    public int PelicualId { get; set; }
+    public int PeliculaId { get; set; }
 
     public byte[]? Imagen { get; set; }
 
@@ -29,5 +30,9 @@ public class Peliculas
     public string? Resena { get; set; }
 
     public string? Trailer { get; set; }
-}
 
+	public int TipoPeliculaId { get; set; }
+
+	[ForeignKey("PeliculaId")]
+	public ICollection<PeliculasDetalle> peliculaDetalle { get; set; } = new List<PeliculasDetalle>();
+}

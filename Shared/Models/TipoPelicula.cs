@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace ProyectoFinal.Shared.Models;
 
-public class TipoLibro
+public class TipoPelicula
 {
 	[Key]
 
-	public int TipoId { get; set; }
+	public int TipoPeliculaId { get; set; }
 
 	[Required(ErrorMessage = "La  categoria es requerido")]
 	public string? Categoria { get; set; }
 
 	public int Disponible { get; set; }
 
-	[Required(ErrorMessage = "El el campo autor no puede estar vacío")]
-	public string? Autor { get; set; }
+	[Required(ErrorMessage = "El el campo Actores no puede estar vacío")]
+	public string? Actores { get; set; }
 }

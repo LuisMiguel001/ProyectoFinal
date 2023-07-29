@@ -20,9 +20,9 @@
 			<div class="card-body">
 				@*Buscar*@
 				<div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
-					<label>Buscar Libro</label>
+					<label>Buscar Pelicula</label>
 					<div class="input-group mb-3">
-						<InputNumber @bind-Value="pelicula.PelicualId" class="form-control" aria-describedby="buscarButton" />
+						<InputNumber @bind-Value="pelicula.PeliculaId" class="form-control" aria-describedby="buscarButton" />
 						<button @onclick="Buscar" class="btn btn-outline-primary" type="button" id="buscarButton">
 							<i class="oi oi-magnifying-glass" />
 						</button>
@@ -128,11 +128,11 @@
 						</div>
 					</div>
 
-					@*Link*@
+					@*Trailer*@
 					<div class="col-9">
 						<div Class="form-group">
 							<div class="input-group">
-								<span class="input-group-text">Link</span>
+								<span class="input-group-text">Trailer</span>
 								<InputText @bind-Value="pelicula.Trailer" class="form-control"></InputText>
 								<ValidationMessage For="@(() =>pelicula.Trailer)" />
 							</div>
@@ -140,6 +140,62 @@
 					</div>
 				</div>
 			</div>
+
+			@*DETALLE*@
+			<fieldset class="border-success border border-1">
+				<div class="card-header">
+					<h3>Informaci&oacuten</h3>
+				</div>
+				<div class="row m-1">
+					@*TipoPelicula*@
+					<div class="col-md-6">
+						<label>Categoria: </label>
+						<InputSelect @bind-Value="detalle.TipoPeliculaId" class="form-select">
+							<option value="@pelicula.TipoPeliculaId" hidden="hidden">[Seleccione]</option>
+							@foreach (var item in TiposPeliculasList)
+							{
+								<option value="@item.TipoPeliculaId">@item.Categoria</option>
+							}
+						</InputSelect>
+						<ValidationMessage For="@(() => detalle.TipoPeliculaId)" />
+					</div>
+
+					@*Boton Agregar*@
+					<div class="col-md-5">
+						<label>Actores</label>
+						<div class="input-group">
+							<InputText @bind-Value="detalle.Actores" class="form-control"></InputText>
+							<button type="button" class="btn btn-outline-success" @onclick="AgregarDetalle">Agregar <i class="oi oi-plus" /></button>
+							<ValidationMessage For="@(() => detalle.Actores)" />
+						</div>
+					</div>
+				</div>
+
+				@*Tabla de detalles*@
+				<hr />
+				<table class="table table-bordered table-light m-1">
+					<thead class="thead">
+						<tr class="table">
+							<th>Pelicula ID</th>
+							<th>Categoria</th>
+							<th>Actores</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						@foreach (var item in this.pelicula.peliculaDetalle)
+						{
+							<tr>
+								<td>@item.TipoPeliculaId</td>
+								<td>@ObtenerDescripcion(item.TipoPeliculaId)</td>
+								<td>@item.Actores</td>
+								<td><button type="button" class="btn btn-outline-danger" @onclick=@(() => RemoverDetalle(item))><i class="oi oi-trash" /></button></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+				<hr />
+			</fieldset>
 
 			@*Botones*@
 			<div class="card-footer d-flex justify-content-center">
@@ -171,6 +227,13 @@
 	void OnDragEnter(DragEventArgs e) => claseEncima = "hover";
 	void OnDragLeave(DragEventArgs e) => claseEncima = string.Empty;
 
+	public int TipoPeliculaSeleccionado { get; set; } = 0;
+	public string PeliculaSeleccionado { get; set; } = string.Empty;
+	public string ValidacionDetalle { get; set; } = string.Empty;
+
+	public PeliculasDetalle detalle { get; set; } = new PeliculasDetalle();
+	public IEnumerable<TipoPelicula> TiposPeliculasList { get; set; } = Enumerable.Empty<TipoPelicula>();
+
 	public async Task OnChange(InputFileChangeEventArgs e)
 	{
 		foreach (var archivo in e.GetMultipleFiles())
@@ -196,16 +259,23 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		var tipos = await httpClient.GetFromJsonAsync<List<TipoPelicula>>("api/Peli");
+
+		if (tipos is not null)
+		{
+			TiposPeliculasList = tipos;
+		}
+
 		if (PeliculaId > 0)
 		{
-			this.pelicula.PelicualId = PeliculaId;
+			this.pelicula.PeliculaId = PeliculaId;
 			await Buscar();
 		}
 	}
 
 	public async Task Buscar()
 	{
-		var peliculaEncotrado = await httpClient.GetFromJsonAsync<Peliculas>($"api/Peliculas/{pelicula.PelicualId}");
+		var peliculaEncotrado = await httpClient.GetFromJsonAsync<Peliculas>($"api/Peliculas/{pelicula.PeliculaId}");
 
 		if (peliculaEncotrado != null)
 		{
@@ -254,7 +324,7 @@
 
 	public bool Validar()
 	{
-		if (string.IsNullOrEmpty(pelicula.Titulo) || pelicula.PelicualId < 0)
+		if (string.IsNullOrEmpty(pelicula.Titulo) || pelicula.PeliculaId < 0)
 		{
 			return false;
 		}
@@ -271,7 +341,7 @@
 
 	public async Task Eliminar()
 	{
-		using var response = await httpClient.DeleteAsync($"api/Peliculas/{pelicula.PelicualId}");
+		using var response = await httpClient.DeleteAsync($"api/Peliculas/{pelicula.PeliculaId}");
 
 		if (Validar())
 		{
@@ -286,5 +356,49 @@
 				Mensaje = "Se ha eliminado correctamente";
 			}
 		}
+	}
+
+	private async Task<TipoPelicula> BuscarPeliculas(int peliculaId)
+	{
+		var pelicula = await httpClient.GetFromJsonAsync<TipoPelicula>($"api/Peli/{peliculaId}");
+
+		return pelicula ?? new TipoPelicula();
+	}
+
+	public async Task AgregarDetalle()
+	{
+		var pelicula = await BuscarPeliculas(detalle.TipoPeliculaId);
+		if (ValidarDetalle())
+		{
+			if (pelicula != null)
+			{
+				detalle.PeliculaId = this.pelicula.PeliculaId;
+				this.pelicula.peliculaDetalle.Add(detalle);
+				detalle = new PeliculasDetalle();
+			}
+		}
+	}
+
+	public string ObtenerDescripcion(int Id)
+	{
+		return TiposPeliculasList.Where(p => p.TipoPeliculaId == Id).FirstOrDefault().Categoria;
+	}
+
+	public void RemoverDetalle(PeliculasDetalle detalle)
+	{
+		pelicula.peliculaDetalle.Remove(detalle);
+	}
+
+	public bool ValidarDetalle()
+	{
+		if (detalle.Actores == string.Empty)
+		{
+			Mensaje = "Debe agregar el autor o en defecto colocarlo anonimo";
+		}
+		if (TipoPeliculaSeleccionado <= 0)
+		{
+			ValidacionDetalle = "El Tipo de Libro es obligatorio";
+		}
+		return ValidacionDetalle.Length == 0;
 	}
 }

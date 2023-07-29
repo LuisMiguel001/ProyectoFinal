@@ -40,7 +40,7 @@ namespace ProyectoFinal.Server.Controllers
 			}
 
 			var pelicula = await _context.Peliculas
-				.Where(l => l.PelicualId == id)
+				.Where(l => l.PeliculaId == id)
 				.FirstOrDefaultAsync();
 
 			if (pelicula == null)
@@ -53,7 +53,7 @@ namespace ProyectoFinal.Server.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Peliculas>> PostPeliculas(Peliculas pelicula)
 		{
-			if (!Existe(pelicula.PelicualId))
+			if (!Existe(pelicula.PeliculaId))
 				_context.Peliculas.Add(pelicula);
 			else
 				_context.Peliculas.Update(pelicula);
@@ -85,7 +85,7 @@ namespace ProyectoFinal.Server.Controllers
 
 		private bool Existe(int id)
 		{
-			return (_context.Peliculas?.Any(l => l.PelicualId == id)).GetValueOrDefault();
+			return (_context.Peliculas?.Any(l => l.PeliculaId == id)).GetValueOrDefault();
 		}
 	}
 }

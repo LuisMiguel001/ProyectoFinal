@@ -29,19 +29,19 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (var libro in Pelicula)
+					@foreach (var pelicula in Pelicula)
 					{
 						<tr>
-							<img src="data:@libro.Imagen" />
+							<img src="data:@pelicula.Imagen" />
 							@*<td src="@libro.Imagen"></td>*@
 							@*<td>@libro.Imagen</td>*@
-							<td>@libro.Titulo</td>
-							<td>@libro.Email</td>
-							<td>@libro.Fecha.ToString("dd/MM/yyyy")</td>
-							<td>@libro.Puntuacion</td>
-							<td>@libro.Resena</td>
-							<td>@libro.Trailer</td>
-							<td><a href="Libro/@libro.PelicualId">Ver</a></td>
+							<td>@pelicula.Titulo</td>
+							<td>@pelicula.Email</td>
+							<td>@pelicula.Fecha.ToString("dd/MM/yyyy")</td>
+							<td>@pelicula.Puntuacion</td>
+							<td>@pelicula.Resena</td>
+							<td>@pelicula.Trailer</td>
+							<td><a href="Pelicula/@pelicula.PeliculaId">Ver</a></td>
 						</tr>
 					}
 				</tbody>

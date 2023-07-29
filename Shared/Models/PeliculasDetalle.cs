@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace ProyectoFinal.Shared.Models;
 
-public class LibrosDetalle
+public class PeliculasDetalle
 {
 	[Key]
 
-	public int DetalleId { get; set; }
+	public int DetallePeliculaId { get; set; }
 
-	public int LibroId { get; set; }
+	public int PeliculaId { get; set; }
 
-	public int TipoId { get; set; }
+	public int TipoPeliculaId { get; set; }
 
 	public int Disponible { get; set; }
 
-    public string? Autor { get; set; }
+	public string? Actores { get; set; }
 }
