@@ -8,11 +8,11 @@ using ProyectoFinal.Server.DAL;
 
 #nullable disable
 
-namespace ProyectoFinal.Server.Migrations
+namespace ProyectoFinal.Server.Migrations.Peliculas
 {
-    [DbContext(typeof(LibrosContext))]
-    [Migration("20230726210730_Inicial")]
-    partial class Inicial
+    [DbContext(typeof(PeliculasContext))]
+    [Migration("20230728003531_Pelicula")]
+    partial class Pelicula
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,19 +20,11 @@ namespace ProyectoFinal.Server.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.9");
 
-            modelBuilder.Entity("ProyectoFinal.Shared.Models.Libros", b =>
+            modelBuilder.Entity("ProyectoFinal.Shared.Models.Peliculas", b =>
                 {
-                    b.Property<int>("LibroId")
+                    b.Property<int>("PelicualId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Clave")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Correo")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -44,28 +36,22 @@ namespace ProyectoFinal.Server.Migrations
                     b.Property<byte[]>("Imagen")
                         .HasColumnType("BLOB");
 
-                    b.Property<string>("Link")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Nombre")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("Puntuacion")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Resena")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Rol")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Titulo")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("LibroId");
+                    b.Property<string>("Trailer")
+                        .HasColumnType("TEXT");
 
-                    b.ToTable("Libros");
+                    b.HasKey("PelicualId");
+
+                    b.ToTable("Peliculas");
                 });
 #pragma warning restore 612, 618
         }

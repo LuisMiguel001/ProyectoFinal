@@ -8,26 +8,26 @@ namespace ProyectoFinal.Server.Controllers;
 [ApiController]
 public class UsuariosController : ControllerBase
 {
-	[HttpPost]
-	[Route("Login")]
-	public async Task<IActionResult> Login([FromBody] Libros login)
-	{
-		Sesion sesionDTO = new Sesion();
+	//[HttpPost]
+	//[Route("Login")]
+	//public async Task<IActionResult> Login([FromBody] Libros login)
+	//{
+	//	Sesion sesionDTO = new Sesion();
 
-		if (login.Correo == "admin@gmail.com" && login.Clave == "admin")
-		{
-			sesionDTO.Nombre = "admin";
-			sesionDTO.Correo = login.Correo;
-			sesionDTO.Rol = "Administrador";
-		}
-		else
-		{
-			sesionDTO.Nombre = "empleado";
-			sesionDTO.Correo = login.Correo;
-			sesionDTO.Rol = "Empleado";
-		}
+	//	if (login.Correo == "admin@gmail.com" && login.Clave == "admin")
+	//	{
+	//		sesionDTO.Nombre = "admin";
+	//		sesionDTO.Correo = login.Correo;
+	//		sesionDTO.Rol = "Administrador";
+	//	}
+	//	else
+	//	{
+	//		sesionDTO.Nombre = "empleado";
+	//		sesionDTO.Correo = login.Correo;
+	//		sesionDTO.Rol = "Empleado";
+	//	}
 
-		return StatusCode(StatusCodes.Status200OK, sesionDTO);
-	}
+	//	return StatusCode(StatusCodes.Status200OK, sesionDTO);
+	//}
 }
 

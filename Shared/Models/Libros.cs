@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,9 +31,8 @@ public class Libros
 
 	public string? Link { get; set; }
 
-    [Required(ErrorMessage = "Debe ingrasar el correo")]
-    public string? Correo { get; set; }
+	public int TipoId { get; set; }
 
-    [Required(ErrorMessage = "Debe ingresar la clave")]
-    public string? Clave { get; set; }
+	[ForeignKey("LibroId")]
+	public ICollection<LibrosDetalle> libroDetalle { get; set; } = new List<LibrosDetalle>();
 }

@@ -141,6 +141,62 @@
 				</div>
 			</div>
 
+			@*DETALLE*@
+			<fieldset class="border-success border border-1">
+				<div class="card-header">
+					<h3>Informaci&oacuten</h3>
+				</div>
+				<div class="row m-1">
+					@*TipoLibro*@
+					<div class="col-md-6">
+						<label>Categoria: </label>
+						<InputSelect @bind-Value="detalle.TipoId" class="form-select">
+							<option value="@libro.TipoId" hidden="hidden">[Seleccione]</option>
+							@foreach (var item in TiposLibrosList)
+							{
+								<option value="@item.TipoId">@item.Categoria</option>
+							}
+						</InputSelect>
+						<ValidationMessage For="@(() => detalle.TipoId)" />
+					</div>
+
+					@*Boton Agregar*@
+					<div class="col-md-5">
+						<label>Autor</label>
+						<div class="input-group">
+							<InputText @bind-Value="detalle.Autor" class="form-control"></InputText>
+							<button type="button" class="btn btn-outline-success" @onclick="AgregarDetalle">Agregar <i class="oi oi-plus" /></button>
+							<ValidationMessage For="@(() => detalle.Autor)" />
+						</div>
+					</div>
+				</div>
+
+				@*Tabla de detalles*@
+				<hr />
+				<table class="table table-bordered table-light m-1">
+					<thead class="thead">
+						<tr class="table">
+							<th>Libro ID</th>
+							<th>Categoria</th>
+							<th>Autor</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						@foreach (var item in this.libro.libroDetalle)
+						{
+							<tr>
+								<td>@item.TipoId</td>
+								<td>@ObtenerDescripcion(item.TipoId)</td>
+								<td>@item.Autor</td>
+								<td><button type="button" class="btn btn-outline-danger" @onclick=@(() => RemoverDetalle(item))><i class="oi oi-trash" /></button></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+				<hr />
+			</fieldset>
+
 			@*Botones*@
 			<div class="card-footer d-flex justify-content-center">
 				<div class="btn-group" role="group">
@@ -160,6 +216,7 @@
 @code {
 	[Parameter]
 	public int LibroId { get; set; }
+	public int Total { get; set; } = 0;
 	public Libros libro { get; set; } = new Libros();
 
 	public List<byte[]> imagenes { get; set; } = new List<byte[]>();
@@ -170,6 +227,15 @@
 
 	void OnDragEnter(DragEventArgs e) => claseEncima = "hover";
 	void OnDragLeave(DragEventArgs e) => claseEncima = string.Empty;
+
+	public int TipoLibroSeleccionado { get; set; } = 0;
+	public string LibroSeleccionado { get; set; } = string.Empty;
+
+	public string ValidacionDetalle { get; set; } = string.Empty;
+
+	public TipoLibro productos { get; set; } = new TipoLibro();
+	public LibrosDetalle detalle { get; set; } = new LibrosDetalle();
+	public IEnumerable<TipoLibro> TiposLibrosList { get; set; } = Enumerable.Empty<TipoLibro>();
 
 	public async Task OnChange(InputFileChangeEventArgs e)
 	{
@@ -196,6 +262,13 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		var tipos = await httpClient.GetFromJsonAsync<List<TipoLibro>>("api/Tipos");
+
+		if (tipos is not null)
+		{
+			TiposLibrosList = tipos;
+		}
+
 		if (LibroId > 0)
 		{
 			this.libro.LibroId = LibroId;
@@ -220,6 +293,7 @@
 
 	public async Task Guardar()
 	{
+		libro.libroDetalle = libro.libroDetalle.ToList();
 		using var response = await httpClient.PostAsJsonAsync("api/Libros", libro);
 
 		if (Validar())
@@ -230,9 +304,9 @@
 
 				if (libroDevuelta is not null)
 				{
-					this.libro = libroDevuelta;
+					libro = libroDevuelta;
 					Nuevo();
-					Mensaje = "Se guardo correctamente";
+					Mensaje = "Guardado";
 				}
 				else
 				{
@@ -241,7 +315,7 @@
 			}
 			else
 			{
-				Mensaje = "Error!!!, intente de nuevo";
+				Mensaje = "Error";
 			}
 		}
 	}
@@ -287,4 +361,59 @@
 			}
 		}
 	}
+
+	private async Task<TipoLibro> BuscarLibros(int libroId)
+	{
+		var libro = await httpClient.GetFromJsonAsync<TipoLibro>($"api/Tipos/{libroId}");
+
+		return libro ?? new TipoLibro();
+	}
+
+	//public bool ValidarDetalle()
+	//{
+	//	if (detalle.LibroId < 0 || detalle.Autor == string.Empty)
+	//	{
+	//		return false;
+	//	}
+	//	else
+	//	{
+	//		Mensaje = "Debe agregar el autor o en defecto colocarlo anonimo";
+	//		return true;
+	//	}
+	//}
+
+	public async Task AgregarDetalle()
+	{
+		var libro = await BuscarLibros(detalle.TipoId);
+
+		if (libro != null)
+		{
+			detalle.LibroId = this.libro.LibroId;
+			this.libro.libroDetalle.Add(detalle);
+			detalle = new LibrosDetalle();
+		}
+	}
+
+	public string ObtenerDescripcion(int Id)
+	{
+		return TiposLibrosList.Where(p => p.TipoId == Id).FirstOrDefault().Categoria;
+	}
+
+	public void RemoverDetalle(LibrosDetalle detalle)
+	{
+		libro.libroDetalle.Remove(detalle);
+	}
+
+	//public bool ValidarDetalle()
+	//{
+	//	if (detalle.Autor == string.Empty)
+	//	{
+	//		Mensaje = "Debe agregar el autor o en defecto colocarlo anonimo";
+	//	}
+	//	if (TipoLibroSeleccionado <= 0)
+	//	{
+	//		ValidacionDetalle = "El Tipo de Libro es obligatorio";
+	//	}
+	//	return ValidacionDetalle.Length == 0;
+	//}
 }

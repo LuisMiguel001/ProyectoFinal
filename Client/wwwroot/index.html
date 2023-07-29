@@ -27,6 +27,10 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        function agregarLocalStorage(llave, valor) { localStorage[llave] = valor; }
+        function leerLocarStorage(llave) { return localStorage[llave];}
+    </script>    
 </body>
 
 </html>
