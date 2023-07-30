@@ -38,15 +38,17 @@ namespace ProyectoFinal.Server.Controllers
 			{
 				return NotFound();
 			}
-
-			var pelicula = await _context.Peliculas
-				.Where(l => l.PeliculaId == id)
-				.FirstOrDefaultAsync();
+			var pelicula = _context.Peliculas
+			  .Where(l => l.PeliculaId == id)
+			  .Include(o => o.peliculaDetalle)
+			  .AsNoTracking()
+			  .SingleOrDefault(); ;
 
 			if (pelicula == null)
 			{
 				return NotFound();
 			}
+
 			return pelicula;
 		}
 

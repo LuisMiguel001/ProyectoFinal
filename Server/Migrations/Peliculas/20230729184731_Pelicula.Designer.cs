@@ -8,11 +8,11 @@ using ProyectoFinal.Server.DAL;
 
 #nullable disable
 
-namespace ProyectoFinal.Server.Migrations
+namespace ProyectoFinal.Server.Migrations.Peliculas
 {
-    [DbContext(typeof(LibrosContext))]
-    [Migration("20230729180305_Libros")]
-    partial class Libros
+    [DbContext(typeof(PeliculasContext))]
+    [Migration("20230729184731_Pelicula")]
+    partial class Pelicula
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,9 +20,9 @@ namespace ProyectoFinal.Server.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.9");
 
-            modelBuilder.Entity("ProyectoFinal.Shared.Models.Libros", b =>
+            modelBuilder.Entity("ProyectoFinal.Shared.Models.Peliculas", b =>
                 {
-                    b.Property<int>("LibroId")
+                    b.Property<int>("PeliculaId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -36,59 +36,59 @@ namespace ProyectoFinal.Server.Migrations
                     b.Property<byte[]>("Imagen")
                         .HasColumnType("BLOB");
 
-                    b.Property<string>("Link")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("Puntuacion")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Resena")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("TipoId")
+                    b.Property<int>("TipoPeliculaId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Titulo")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("LibroId");
+                    b.Property<string>("Trailer")
+                        .HasColumnType("TEXT");
 
-                    b.ToTable("Libros");
+                    b.HasKey("PeliculaId");
+
+                    b.ToTable("Peliculas");
                 });
 
-            modelBuilder.Entity("ProyectoFinal.Shared.Models.LibrosDetalle", b =>
+            modelBuilder.Entity("ProyectoFinal.Shared.Models.PeliculasDetalle", b =>
                 {
-                    b.Property<int>("DetalleId")
+                    b.Property<int>("DetallePeliculaId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Autor")
+                    b.Property<string>("Actores")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Disponible")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("LibroId")
+                    b.Property<int>("PeliculaId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("TipoId")
+                    b.Property<int>("TipoPeliculaId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("DetalleId");
+                    b.HasKey("DetallePeliculaId");
 
-                    b.HasIndex("LibroId");
+                    b.HasIndex("PeliculaId");
 
-                    b.ToTable("Detalle");
+                    b.ToTable("PeliculaDetalle");
                 });
 
-            modelBuilder.Entity("ProyectoFinal.Shared.Models.TipoLibro", b =>
+            modelBuilder.Entity("ProyectoFinal.Shared.Models.TipoPelicula", b =>
                 {
-                    b.Property<int>("TipoId")
+                    b.Property<int>("TipoPeliculaId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Autor")
+                    b.Property<string>("Actores")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -99,81 +99,81 @@ namespace ProyectoFinal.Server.Migrations
                     b.Property<int>("Disponible")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("TipoId");
+                    b.HasKey("TipoPeliculaId");
 
-                    b.ToTable("TipoLibro");
+                    b.ToTable("TipoPelicula");
 
                     b.HasData(
                         new
                         {
-                            TipoId = 1,
-                            Autor = "",
-                            Categoria = "Poesía",
+                            TipoPeliculaId = 1,
+                            Actores = "",
+                            Categoria = "Acción",
                             Disponible = 0
                         },
                         new
                         {
-                            TipoId = 2,
-                            Autor = "",
-                            Categoria = "Ficción",
+                            TipoPeliculaId = 2,
+                            Actores = "",
+                            Categoria = "Terror",
                             Disponible = 0
                         },
                         new
                         {
-                            TipoId = 3,
-                            Autor = "",
-                            Categoria = "Autoayuda y desarrollo personal",
+                            TipoPeliculaId = 3,
+                            Actores = "",
+                            Categoria = "Ciencia ficción",
                             Disponible = 0
                         },
                         new
                         {
-                            TipoId = 4,
-                            Autor = "",
-                            Categoria = "Política y sociedad",
+                            TipoPeliculaId = 4,
+                            Actores = "",
+                            Categoria = "Comedia",
                             Disponible = 0
                         },
                         new
                         {
-                            TipoId = 5,
-                            Autor = "",
-                            Categoria = "Religión y espiritualidad",
+                            TipoPeliculaId = 5,
+                            Actores = "",
+                            Categoria = "Aventura y animación",
                             Disponible = 0
                         },
                         new
                         {
-                            TipoId = 6,
-                            Autor = "",
-                            Categoria = "Historietas y cómics",
+                            TipoPeliculaId = 6,
+                            Actores = "",
+                            Categoria = "Histórico",
                             Disponible = 0
                         },
                         new
                         {
-                            TipoId = 7,
-                            Autor = "",
-                            Categoria = "Viajes y aventuras",
+                            TipoPeliculaId = 7,
+                            Actores = "",
+                            Categoria = "Suspenso",
                             Disponible = 0
                         },
                         new
                         {
-                            TipoId = 8,
-                            Autor = "",
-                            Categoria = "Infantil y juvenil",
+                            TipoPeliculaId = 8,
+                            Actores = "",
+                            Categoria = "Documental",
                             Disponible = 0
                         });
                 });
 
-            modelBuilder.Entity("ProyectoFinal.Shared.Models.LibrosDetalle", b =>
+            modelBuilder.Entity("ProyectoFinal.Shared.Models.PeliculasDetalle", b =>
                 {
-                    b.HasOne("ProyectoFinal.Shared.Models.Libros", null)
-                        .WithMany("libroDetalle")
-                        .HasForeignKey("LibroId")
+                    b.HasOne("ProyectoFinal.Shared.Models.Peliculas", null)
+                        .WithMany("peliculaDetalle")
+                        .HasForeignKey("PeliculaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProyectoFinal.Shared.Models.Libros", b =>
+            modelBuilder.Entity("ProyectoFinal.Shared.Models.Peliculas", b =>
                 {
-                    b.Navigation("libroDetalle");
+                    b.Navigation("peliculaDetalle");
                 });
 #pragma warning restore 612, 618
         }

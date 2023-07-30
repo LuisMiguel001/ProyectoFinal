@@ -37,19 +37,21 @@ public class LibrosController : ControllerBase
 		{
 			return NotFound();
 		}
-
-		var libro = await _context.Libros
-			.Where(l => l.LibroId == id)
-			.FirstOrDefaultAsync();
+		var libro = _context.Libros
+		  .Where(l => l.LibroId == id)
+		  .Include(o => o.libroDetalle)
+		  .AsNoTracking()
+		  .SingleOrDefault(); ;
 
 		if (libro == null)
 		{
 			return NotFound();
 		}
+
 		return libro;
 	}
 
-    [HttpPost]
+	[HttpPost]
 	public async Task<ActionResult<Libros>> PostLibros(Libros libro)
 	{
 		if (!Existe(libro.LibroId))

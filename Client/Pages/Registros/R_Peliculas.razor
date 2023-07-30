@@ -27,6 +27,13 @@
 							<i class="oi oi-magnifying-glass" />
 						</button>
 					</div>
+					@*Buscar Detalle*@
+					@*<div class="input-group mb-3">
+						<InputNumber @bind-Value="detalle.TipoPeliculaId" class="form-control" aria-describedby="buscarButton" />
+						<button @onclick="BuscarPeliculas" class="btn btn-outline-primary" type="button" id="buscarButton">
+							<i class="oi oi-magnifying-glass" />
+						</button>
+					</div>*@
 				</div>
 
 				@*Imagen*@
@@ -368,14 +375,11 @@
 	public async Task AgregarDetalle()
 	{
 		var pelicula = await BuscarPeliculas(detalle.TipoPeliculaId);
-		if (ValidarDetalle())
+		if (pelicula != null)
 		{
-			if (pelicula != null)
-			{
-				detalle.PeliculaId = this.pelicula.PeliculaId;
-				this.pelicula.peliculaDetalle.Add(detalle);
-				detalle = new PeliculasDetalle();
-			}
+			detalle.PeliculaId = this.pelicula.PeliculaId;
+			this.pelicula.peliculaDetalle.Add(detalle);
+			detalle = new PeliculasDetalle();
 		}
 	}
 
@@ -389,16 +393,16 @@
 		pelicula.peliculaDetalle.Remove(detalle);
 	}
 
-	public bool ValidarDetalle()
-	{
-		if (detalle.Actores == string.Empty)
-		{
-			Mensaje = "Debe agregar el autor o en defecto colocarlo anonimo";
-		}
-		if (TipoPeliculaSeleccionado <= 0)
-		{
-			ValidacionDetalle = "El Tipo de Libro es obligatorio";
-		}
-		return ValidacionDetalle.Length == 0;
-	}
+	//public bool ValidarDetalle()
+	//{
+	//	if (detalle.Actores == string.Empty)
+	//	{
+	//		Mensaje = "Debe agregar el autor o en defecto colocarlo anonimo";
+	//	}
+	//	if (TipoPeliculaSeleccionado <= 0)
+	//	{
+	//		ValidacionDetalle = "El Tipo de Libro es obligatorio";
+	//	}
+	//	return ValidacionDetalle.Length == 0;
+	//}
 }

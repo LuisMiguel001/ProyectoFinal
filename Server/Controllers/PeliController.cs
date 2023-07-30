@@ -36,14 +36,16 @@ public class PeliController : ControllerBase
 	}
 
 	[HttpGet("{TipoPeliculaId}")]
-	public async Task<ActionResult<TipoPelicula>> ObtenerTipos(int TipoId)
+	public async Task<ActionResult<TipoPelicula>> ObtenerPeli(int TipoPeliculaId)
 	{
 		if (_context.TipoPelicula == null)
 		{
 			return NotFound();
 		}
 
-		var pelicula = await _context.TipoPelicula.FindAsync(TipoId);
+		var pelicula = await _context.TipoPelicula
+			.Where(l => l.TipoPeliculaId == TipoPeliculaId)
+			.FirstOrDefaultAsync();
 
 		if (pelicula == null)
 		{
@@ -53,7 +55,7 @@ public class PeliController : ControllerBase
 	}
 
 	[HttpPost]
-	public async Task<ActionResult<TipoPelicula>> PostTipos(TipoPelicula tipo)
+	public async Task<ActionResult<TipoPelicula>> PostPeli(TipoPelicula tipo)
 	{
 		if (!Existe(tipo.TipoPeliculaId))
 		{
@@ -69,14 +71,14 @@ public class PeliController : ControllerBase
 	}
 
 	[HttpDelete("{TipoPeliculaId}")]
-	public async Task<IActionResult> Eliminar(int PeliculaId)
+	public async Task<IActionResult> Eliminar(int TipoPeliculaId)
 	{
 		if (_context.TipoPelicula == null)
 		{
 			return NotFound();
 		}
 
-		var pelicula = await _context.TipoPelicula.FindAsync(PeliculaId);
+		var pelicula = await _context.TipoPelicula.FindAsync(TipoPeliculaId);
 
 		if (pelicula == null)
 		{
