@@ -1,0 +1,62 @@
+﻿@*﻿
+@page "/Login"
+@using ProyectoFinal.Shared
+@using ProyectoFinal.Shared.Models
+@inject HttpClient httpClient
+@inject NavigationManager NavigationManager
+
+<h3>Página de inicio de sesión</h3>
+
+<EditForm Model="login" OnValidSubmit="HandleLogin">
+	<DataAnnotationsValidator />
+
+	<div class="form-group">
+		<label for="Email">Email:</label>
+		<InputText class="form-control" id="Email" @bind-Value="login.Email" />
+		<ValidationMessage For="@(() => login.Email)" />
+	</div>
+
+	<div class="form-group">
+		<label for="Password">Contraseña:</label>
+		<InputText type="password" class="form-control" id="Password" @bind-Value="login.NombreRol" />
+		<ValidationMessage For="@(() => login.NombreRol)" />
+	</div>
+
+	<div class="card-footer d-flex justify-content-center">
+		<div class="btn-group">
+			<button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+		</div>
+	</div>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+	<p class="text-danger">@errorMessage</p>
+}
+
+@code {
+	//private Login login = new Login();
+	private Roles login = new();
+	private string errorMessage = string.Empty;
+
+	private async Task HandleLogin()
+	{
+		try
+		{
+			var response = await httpClient.PostAsJsonAsync("api/Usuarios/AuthenticateUser", login);
+
+			if (response.IsSuccessStatusCode)
+			{
+				NavigationManager.NavigateTo("/");
+			}
+			else
+			{
+				errorMessage = "Credenciales inválidas. Por favor, verifica tu email y contraseña.";
+			}
+		}
+		catch (Exception ex)
+		{
+			errorMessage = "Ocurrió un error al intentar iniciar sesión: " + ex.Message;
+		}
+	}
+}*@

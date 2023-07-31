@@ -10,6 +10,7 @@
     <link href="css/app.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link href="ProyectoFinal.Client.styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/standard-base.css">
 </head>
 
 <body>
@@ -27,10 +28,11 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
     <script>
         function agregarLocalStorage(llave, valor) { localStorage[llave] = valor; }
-        function leerLocarStorage(llave) { return localStorage[llave];}
-    </script>    
+        function leerLocarStorage(llave) { return localStorage[llave]; }
+    </script>
 </body>
 
 </html>

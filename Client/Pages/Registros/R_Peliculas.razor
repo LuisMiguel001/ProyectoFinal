@@ -1,6 +1,7 @@
 ﻿@page "/Pelicula"
 @page "/Pelicula/{PeliculaId:int}"
 @inject HttpClient httpClient
+@inject NotificationService notificationService
 @using Newtonsoft.Json;
 @using System.Text;
 @*@using Microsoft.AspNetCore.Authorization;
@@ -27,52 +28,22 @@
 							<i class="oi oi-magnifying-glass" />
 						</button>
 					</div>
-					@*Buscar Detalle*@
-					@*<div class="input-group mb-3">
-						<InputNumber @bind-Value="detalle.TipoPeliculaId" class="form-control" aria-describedby="buscarButton" />
-						<button @onclick="BuscarPeliculas" class="btn btn-outline-primary" type="button" id="buscarButton">
-							<i class="oi oi-magnifying-glass" />
-						</button>
-					</div>*@
 				</div>
 
 				@*Imagen*@
 				<div class="mb-3">
-					<label class="form-label">Agregar Imagen</label>
-					<input type="file" OnChange="OnChange" class="form-control" />
+					<div class="mb-3">
+						<div class="input-group">
+							<InputFile OnChange="OnChange" class="form-control" accept=".png, .jpg, .jpeg" />
+							<ValidationMessage For="@(() => pelicula.Imagen)" />
+						</div>
+					</div>
 					@if (pelicula.Imagen != null)
 					{
-						<img src="@pelicula.Imagen" alt="Imagen del Libro" />
+						<img src="@Convert.ToBase64String(pelicula.Imagen)" alt="Imagen seleccionada" />
 					}
 				</div>
 
-				@*Imagen*@
-				@*<div class="contenedor-destino-arrastre @claseEncima" @ondragenter="OnDragEnter"
-				@ondragover="OnDragEnter" @ondragleave="OnDragLeave">
-				<InputFile multiple OnChange="OnChange"></InputFile>
-				</div>
-
-				<div class="contenedor-imagen">
-				@foreach (var imagen in imagenes)
-				{
-				<img src="@imagen" />
-				}
-				</div>*@
-
-				@*	<div class="input-group">
-				<div class="custom-file">
-				<InputFile class="custom-file-input" multiple OnChange="OnChange" accept="image/png, image/jpeg, image/gif" id="Imagen" name="upload" />
-				<label class="custom-file-label" for="inputFile">Choose file</label>
-				</div>
-				@*<div class="input-group-append">
-				<button class="btn btn-success" disabled="@isDisabled">Upload</button>
-				</div>*@
-
-				@*@foreach (var imagen in imagenes)
-				{
-				<img src="data:@imagen" />
-				}
-				*@
 				<br>
 
 				@*Titulo*@
@@ -140,7 +111,7 @@
 						<div Class="form-group">
 							<div class="input-group">
 								<span class="input-group-text">Trailer</span>
-								<InputText @bind-Value="pelicula.Trailer" class="form-control"></InputText>
+								<input type="url" @bind="pelicula.Trailer" class="form-control" name="Trailer">
 								<ValidationMessage For="@(() =>pelicula.Trailer)" />
 							</div>
 						</div>
@@ -241,28 +212,14 @@
 	public PeliculasDetalle detalle { get; set; } = new PeliculasDetalle();
 	public IEnumerable<TipoPelicula> TiposPeliculasList { get; set; } = Enumerable.Empty<TipoPelicula>();
 
-	public async Task OnChange(InputFileChangeEventArgs e)
+	async Task OnChange(InputFileChangeEventArgs e)
 	{
-		foreach (var archivo in e.GetMultipleFiles())
-		{
-			using var stream = archivo.OpenReadStream(tamañoMaximoArchivo);
-			using var ms = new MemoryStream();
-			await stream.CopyToAsync(ms);
-			byte[] byteArray = ms.ToArray();
-			imagenes.Add(byteArray);
-		}
-	}
+		var archivo = e.File;
+		var buffer = new byte[archivo.Size];
 
-	//async Task OnChange(InputFileChangeEventArgs e)
-	//{
-	//	foreach (var archivo in e.GetMultipleFiles())
-	//	{
-	//		using var stream = archivo.OpenReadStream(tamañoMaximoArchivo);
-	//		using var ms = new MemoryStream();
-	//		await stream.CopyToAsync(ms);
-	//		imagenes.Add($"data:{archivo.ContentType};base64,{Convert.ToBase64String(ms.ToArray())}");
-	//	}
-	//}
+		await archivo.OpenReadStream().ReadAsync(buffer);
+		pelicula.Imagen = buffer;
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -291,7 +248,11 @@
 		}
 		else
 		{
-			Mensaje = "No fue encontrado";
+			notificationService.ShowNotification(
+					titulo: "Error de búsqueda",
+					mensaje: "Registro no encontrado",
+					NotificationSeverity.Error
+			);
 		}
 	}
 
@@ -309,16 +270,28 @@
 				{
 					this.pelicula = peliculaDevuelta;
 					Nuevo();
-					Mensaje = "Se guardo correctamente";
+					notificationService.ShowNotification(
+						titulo: "Exito",
+						mensaje: "Registro guardado",
+						NotificationSeverity.Success
+					);
 				}
 				else
 				{
-					Mensaje = "No guardo";
+					notificationService.ShowNotification(
+						titulo: "error!",
+						mensaje: "El Registro no se guardo",
+						NotificationSeverity.Error
+					);
 				}
 			}
 			else
 			{
-				Mensaje = "Error!!!, intente de nuevo";
+				notificationService.ShowNotification(
+					titulo: "error!",
+					mensaje: "!Algo salio mal!",
+					NotificationSeverity.Error
+				);
 			}
 		}
 	}
@@ -337,7 +310,11 @@
 		}
 		if (pelicula.Fecha != DateTime.Today)
 		{
-			Mensaje = "La fecha debe ser la de hoy";
+			notificationService.ShowNotification(
+				titulo: "Aviso!",
+				mensaje: "La fecha debe ser la actual",
+				NotificationSeverity.Error
+			);
 			return false;
 		}
 		else
@@ -354,13 +331,21 @@
 		{
 			if (!response.IsSuccessStatusCode)
 			{
-				Mensaje = "No se logro eliminar";
+				notificationService.ShowNotification(
+					titulo: "Error!",
+					mensaje: "No se pudo eliminar!",
+					NotificationSeverity.Error
+				);
 				return;
 			}
 			else
 			{
 				Nuevo();
-				Mensaje = "Se ha eliminado correctamente";
+				notificationService.ShowNotification(
+					titulo: "Eliminado",
+					mensaje: "Se ha eliminado Correctamente",
+					NotificationSeverity.Success
+				);
 			}
 		}
 	}

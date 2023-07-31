@@ -1,6 +1,7 @@
 ﻿@page "/Libro"
 @page "/Libro/{LibroId:int}"
 @inject HttpClient httpClient
+@inject NotificationService notificationService
 @using Newtonsoft.Json;
 @using System.Text;
 @*@using Microsoft.AspNetCore.Authorization;
@@ -31,41 +32,18 @@
 
 				@*Imagen*@
 				<div class="mb-3">
-					<label class="form-label">Agregar Imagen</label>
-					<input type="file" OnChange="OnChange" class="form-control" />
+					<div class="mb-3">
+						<div class="input-group">
+							<InputFile OnChange="OnChange" class="form-control" accept=".png, .jpg, .jpeg" />
+							<ValidationMessage For="@(() => libro.Imagen)" />
+						</div>
+					</div>
 					@if (libro.Imagen != null)
 					{
-						<img src="@libro.Imagen" alt="Imagen del Libro" />
+						<img src="@Convert.ToBase64String(libro.Imagen)" alt="Imagen seleccionada" />
 					}
 				</div>
 
-				@*Imagen*@
-				@*<div class="contenedor-destino-arrastre @claseEncima" @ondragenter="OnDragEnter"
-				@ondragover="OnDragEnter" @ondragleave="OnDragLeave">
-				<InputFile multiple OnChange="OnChange"></InputFile>
-				</div>
-
-				<div class="contenedor-imagen">
-				@foreach (var imagen in imagenes)
-				{
-				<img src="@imagen" />
-				}
-				</div>*@
-
-				@*	<div class="input-group">
-				<div class="custom-file">
-				<InputFile class="custom-file-input" multiple OnChange="OnChange" accept="image/png, image/jpeg, image/gif" id="Imagen" name="upload" />
-				<label class="custom-file-label" for="inputFile">Choose file</label>
-				</div>
-				@*<div class="input-group-append">
-				<button class="btn btn-success" disabled="@isDisabled">Upload</button>
-				</div>*@
-
-				@*@foreach (var imagen in imagenes)
-				{
-				<img src="data:@imagen" />
-				}
-				*@
 				<br>
 
 				@*Titulo*@
@@ -122,7 +100,7 @@
 						<div Class="form-group">
 							<div class="input-group">
 								<span class="input-group-text">Puntuaci&oacuten 1/10</span>
-								<InputNumber @bind-Value="libro.Puntuacion" class="form-control"></InputNumber>
+								<InputNumber @bind-Value="libro.Puntuacion" class="form-control" min="1" max="10"></InputNumber>
 								<ValidationMessage For="@(() =>libro.Puntuacion)" />
 							</div>
 						</div>
@@ -133,7 +111,7 @@
 						<div Class="form-group">
 							<div class="input-group">
 								<span class="input-group-text">Link</span>
-								<InputText @bind-Value="libro.Link" class="form-control"></InputText>
+								<input type="url" @bind="libro.Link" class="form-control" name="Link">
 								<ValidationMessage For="@(() =>libro.Link)" />
 							</div>
 						</div>
@@ -236,28 +214,14 @@
 	public LibrosDetalle detalle { get; set; } = new LibrosDetalle();
 	public IEnumerable<TipoLibro> TiposLibrosList { get; set; } = Enumerable.Empty<TipoLibro>();
 
-	public async Task OnChange(InputFileChangeEventArgs e)
+	async Task OnChange(InputFileChangeEventArgs e)
 	{
-		foreach (var archivo in e.GetMultipleFiles())
-		{
-			using var stream = archivo.OpenReadStream(tamañoMaximoArchivo);
-			using var ms = new MemoryStream();
-			await stream.CopyToAsync(ms);
-			byte[] byteArray = ms.ToArray();
-			imagenes.Add(byteArray);
-		}
-	}
+		var archivo = e.File;
+		var buffer = new byte[archivo.Size];
 
-	//async Task OnChange(InputFileChangeEventArgs e)
-	//{
-	//	foreach (var archivo in e.GetMultipleFiles())
-	//	{
-	//		using var stream = archivo.OpenReadStream(tamañoMaximoArchivo);
-	//		using var ms = new MemoryStream();
-	//		await stream.CopyToAsync(ms);
-	//		imagenes.Add($"data:{archivo.ContentType};base64,{Convert.ToBase64String(ms.ToArray())}");
-	//	}
-	//}
+		await archivo.OpenReadStream().ReadAsync(buffer);
+		libro.Imagen = buffer;
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -286,13 +250,16 @@
 		}
 		else
 		{
-			Mensaje = "No fue encontrado";
+			notificationService.ShowNotification(
+					titulo: "Error de búsqueda",
+					mensaje: "Registro no encontrado",
+					NotificationSeverity.Error
+			);
 		}
 	}
 
 	public async Task Guardar()
 	{
-		libro.libroDetalle = libro.libroDetalle.ToList();
 		using var response = await httpClient.PostAsJsonAsync("api/Libros", libro);
 
 		if (Validar())
@@ -305,16 +272,28 @@
 				{
 					libro = libroDevuelta;
 					Nuevo();
-					Mensaje = "Guardado";
+					notificationService.ShowNotification(
+						titulo: "Exito",
+						mensaje: "Registro guardado",
+						NotificationSeverity.Success
+					);
 				}
 				else
 				{
-					Mensaje = "No guardo";
+					notificationService.ShowNotification(
+						titulo: "error!",
+						mensaje: "El Registro no se guardo",
+						NotificationSeverity.Error
+					);
 				}
 			}
 			else
 			{
-				Mensaje = "Error";
+				notificationService.ShowNotification(
+					titulo: "error!",
+					mensaje: "!Algo salio mal!",
+					NotificationSeverity.Error
+				);
 			}
 		}
 	}
@@ -333,7 +312,11 @@
 		}
 		if (libro.Fecha != DateTime.Today)
 		{
-			Mensaje = "La fecha debe ser la de hoy";
+			notificationService.ShowNotification(
+				titulo: "Aviso!",
+				mensaje: "La fecha debe ser la actual",
+				NotificationSeverity.Error
+			);
 			return false;
 		}
 		else
@@ -350,13 +333,21 @@
 		{
 			if (!response.IsSuccessStatusCode)
 			{
-				Mensaje = "No se logro eliminar";
+				notificationService.ShowNotification(
+					titulo: "Error!",
+					mensaje: "No se pudo eliminar!",
+					NotificationSeverity.Error
+				);
 				return;
 			}
 			else
 			{
 				Nuevo();
-				Mensaje = "Se ha eliminado correctamente";
+				notificationService.ShowNotification(
+					titulo: "Eliminado",
+					mensaje: "Se ha eliminado Correctamente",
+					NotificationSeverity.Success
+				);
 			}
 		}
 	}
