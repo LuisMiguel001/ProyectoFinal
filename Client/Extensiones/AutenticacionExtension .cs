@@ -15,7 +15,7 @@ public class AutenticacionExtension : AuthenticationStateProvider
 		_sessionStorage = sessionStorage;
 	}
 
-	public async Task ActualizarEstadoAutenticacion(Sesion? sesionUsuario)
+	public async Task ActualizarEstadoAutenticacion(LoginDTO? sesionUsuario)
 	{
 		ClaimsPrincipal claimsPrincipal;
 
@@ -44,7 +44,7 @@ public class AutenticacionExtension : AuthenticationStateProvider
 	public override async Task<AuthenticationState> GetAuthenticationStateAsync()
 	{
 
-		var sesionUsuario = await _sessionStorage.ObtenerStorage<Sesion>("sesionUsuario");
+		var sesionUsuario = await _sessionStorage.ObtenerStorage<LoginDTO>("sesionUsuario");
 
 		if (sesionUsuario == null)
 			return await Task.FromResult(new AuthenticationState(_sinInformacion));

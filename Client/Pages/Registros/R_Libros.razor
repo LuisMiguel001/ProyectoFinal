@@ -4,8 +4,9 @@
 @inject NotificationService notificationService
 @using Newtonsoft.Json;
 @using System.Text;
-@*@using Microsoft.AspNetCore.Authorization;
-@attribute [Authorize(Roles = "Administrador,Empleado")]*@
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Components.Authorization;
+@attribute [Authorize]
 
 <EditForm Model="libro" OnValidSubmit="Guardar">
 	<DataAnnotationsValidator />

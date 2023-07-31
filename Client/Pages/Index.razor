@@ -1,8 +1,8 @@
-﻿@page "/"
-@*
+﻿@page "/Index"
+
 @using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Components.Authorization;
-@attribute [Authorize]*@
+@attribute [Authorize]
 
 <PageTitle>Index</PageTitle>
 
@@ -10,10 +10,10 @@
 
 Welcome to your new app.
 
-@*<AuthorizeView>
+<AuthorizeView>
     <Authorized>
         <h1>Bienvenido @context.User.Identity!.Name</h1>
     </Authorized>
-</AuthorizeView>*@
+</AuthorizeView>
 
 <SurveyPrompt Title="How is Blazor working for you?" />
