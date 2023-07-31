@@ -11,7 +11,7 @@ using ProyectoFinal.Server.DAL;
 namespace ProyectoFinal.Server.Migrations
 {
     [DbContext(typeof(LibrosContext))]
-    [Migration("20230729184644_Libros")]
+    [Migration("20230730234904_Libros")]
     partial class Libros
     {
         /// <inheritdoc />
@@ -72,6 +72,9 @@ namespace ProyectoFinal.Server.Migrations
                     b.Property<int>("LibroId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("LoginId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("TipoId")
                         .HasColumnType("INTEGER");
 
@@ -79,7 +82,87 @@ namespace ProyectoFinal.Server.Migrations
 
                     b.HasIndex("LibroId");
 
+                    b.HasIndex("LoginId");
+
                     b.ToTable("Detalle");
+                });
+
+            modelBuilder.Entity("ProyectoFinal.Shared.Models.Login", b =>
+                {
+                    b.Property<int>("LoginId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NombreCompleto")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NombreUsuario")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Rol")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Salt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("LoginId");
+
+                    b.ToTable("Login");
+
+                    b.HasData(
+                        new
+                        {
+                            LoginId = 1,
+                            Email = "luisadmin@gmail.com",
+                            NombreCompleto = "Luis Miguel",
+                            NombreUsuario = "Admin",
+                            Password = "admin123",
+                            PasswordHash = "246edd79917c961849c0bb9445bf0e927ff568e9c344bcfad7268f48ba49ffff",
+                            Rol = 1
+                        });
+                });
+
+            modelBuilder.Entity("ProyectoFinal.Shared.Models.Roles", b =>
+                {
+                    b.Property<int>("RolId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("NombreRol")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("RolId");
+
+                    b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            RolId = 1,
+                            NombreRol = "Administrador"
+                        },
+                        new
+                        {
+                            RolId = 2,
+                            NombreRol = "Profesor"
+                        },
+                        new
+                        {
+                            RolId = 3,
+                            NombreRol = "Estudiante"
+                        });
                 });
 
             modelBuilder.Entity("ProyectoFinal.Shared.Models.TipoLibro", b =>
@@ -169,11 +252,20 @@ namespace ProyectoFinal.Server.Migrations
                         .HasForeignKey("LibroId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("ProyectoFinal.Shared.Models.Login", null)
+                        .WithMany("LibroLoginDetalle")
+                        .HasForeignKey("LoginId");
                 });
 
             modelBuilder.Entity("ProyectoFinal.Shared.Models.Libros", b =>
                 {
                     b.Navigation("libroDetalle");
+                });
+
+            modelBuilder.Entity("ProyectoFinal.Shared.Models.Login", b =>
+                {
+                    b.Navigation("LibroLoginDetalle");
                 });
 #pragma warning restore 612, 618
         }

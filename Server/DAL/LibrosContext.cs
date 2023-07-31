@@ -9,11 +9,13 @@ public class LibrosContext : DbContext
 	public LibrosContext(DbContextOptions<LibrosContext> options)
 		:base(options) { }
 
+    public DbSet<Login> Login { get; set; }
+    public DbSet<Roles> Roles { get; set; }
 	public DbSet<Libros> Libros { get; set; }
 	public DbSet<TipoLibro> TipoLibro { get; set; }
 	public DbSet<LibrosDetalle> Detalle { get; set; }
 
-	protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		base.OnModelCreating(modelBuilder);
 		modelBuilder.Entity<TipoLibro>().HasData(new List<TipoLibro>()
@@ -27,5 +29,25 @@ public class LibrosContext : DbContext
 			new TipoLibro(){TipoId=7, Categoria="Viajes y aventuras", Autor = "", Disponible = 0 },
 			new TipoLibro(){TipoId=8, Categoria="Infantil y juvenil", Autor = "", Disponible = 0 }
 		});
-	}
+
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Login>().HasData(new List<Login>()
+            {
+                new Login(){
+                    LoginId = 1,
+                    NombreCompleto = "Luis Miguel",
+                    NombreUsuario = "Admin",
+                    Email = "luisadmin@gmail.com",
+                    Password = "admin123",
+                    PasswordHash = PasswordHashHelper.GetHashedPassword("admin123", PasswordHashHelper.GenerateSalt()),
+                    Rol = 1 },
+            });
+
+        modelBuilder.Entity<Roles>().HasData(new List<Roles>()
+            {
+                new Roles(){ RolId = 1, NombreRol = "Administrador" },
+                new Roles(){ RolId = 2, NombreRol = "Profesor" },
+                new Roles(){ RolId = 3, NombreRol = "Estudiante" },
+            });
+    }
 }

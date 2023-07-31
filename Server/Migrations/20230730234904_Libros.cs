@@ -34,6 +34,38 @@ namespace ProyectoFinal.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Login",
+                columns: table => new
+                {
+                    LoginId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    NombreCompleto = table.Column<string>(type: "TEXT", nullable: false),
+                    NombreUsuario = table.Column<string>(type: "TEXT", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", nullable: true),
+                    Password = table.Column<string>(type: "TEXT", nullable: false),
+                    PasswordHash = table.Column<string>(type: "TEXT", nullable: true),
+                    Salt = table.Column<string>(type: "TEXT", nullable: true),
+                    Rol = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Login", x => x.LoginId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    RolId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    NombreRol = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.RolId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TipoLibro",
                 columns: table => new
                 {
@@ -57,7 +89,8 @@ namespace ProyectoFinal.Server.Migrations
                     LibroId = table.Column<int>(type: "INTEGER", nullable: false),
                     TipoId = table.Column<int>(type: "INTEGER", nullable: false),
                     Disponible = table.Column<int>(type: "INTEGER", nullable: false),
-                    Autor = table.Column<string>(type: "TEXT", nullable: true)
+                    Autor = table.Column<string>(type: "TEXT", nullable: true),
+                    LoginId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -68,6 +101,26 @@ namespace ProyectoFinal.Server.Migrations
                         principalTable: "Libros",
                         principalColumn: "LibroId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Detalle_Login_LoginId",
+                        column: x => x.LoginId,
+                        principalTable: "Login",
+                        principalColumn: "LoginId");
+                });
+
+            migrationBuilder.InsertData(
+                table: "Login",
+                columns: new[] { "LoginId", "Email", "NombreCompleto", "NombreUsuario", "Password", "PasswordHash", "Rol", "Salt" },
+                values: new object[] { 1, "luisadmin@gmail.com", "Luis Miguel", "Admin", "admin123", "246edd79917c961849c0bb9445bf0e927ff568e9c344bcfad7268f48ba49ffff", 1, null });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "RolId", "NombreRol" },
+                values: new object[,]
+                {
+                    { 1, "Administrador" },
+                    { 2, "Profesor" },
+                    { 3, "Estudiante" }
                 });
 
             migrationBuilder.InsertData(
@@ -89,6 +142,11 @@ namespace ProyectoFinal.Server.Migrations
                 name: "IX_Detalle_LibroId",
                 table: "Detalle",
                 column: "LibroId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Detalle_LoginId",
+                table: "Detalle",
+                column: "LoginId");
         }
 
         /// <inheritdoc />
@@ -98,10 +156,16 @@ namespace ProyectoFinal.Server.Migrations
                 name: "Detalle");
 
             migrationBuilder.DropTable(
+                name: "Roles");
+
+            migrationBuilder.DropTable(
                 name: "TipoLibro");
 
             migrationBuilder.DropTable(
                 name: "Libros");
+
+            migrationBuilder.DropTable(
+                name: "Login");
         }
     }
 }

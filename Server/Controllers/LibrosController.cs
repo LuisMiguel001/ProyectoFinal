@@ -51,19 +51,19 @@ public class LibrosController : ControllerBase
 		return libro;
 	}
 
-	[HttpPost]
-	public async Task<ActionResult<Libros>> PostLibros(Libros libro)
-	{
-		if (!Existe(libro.LibroId))
-			_context.Libros.Add(libro);
-		else
-			_context.Libros.Update(libro);
+    [HttpPost]
+    public async Task<ActionResult<Libros>> PostLibros(Libros libro)
+    {
+        if (!Existe(libro.LibroId))
+            _context.Libros.Add(libro);
+        else
+            _context.Libros.Update(libro);
 
-		await _context.SaveChangesAsync();
-		return Ok(libro);
-	}
+        await _context.SaveChangesAsync();
+        return Ok(libro);
+    }
 
-	[HttpDelete("{id}")]
+    [HttpDelete("{id}")]
 	public async Task<ActionResult> DeleteLibros(int id)
 	{
 		if (_context.Libros == null)
