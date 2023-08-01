@@ -10,6 +10,7 @@ En el área de consultas puedes encontrar las recomendaciones ya hechas por otro
 
 ![](https://i.postimg.cc/XYjSQ8Hw/Imagen2.png)
 
+
 **Detalle:** En el caso del detalle este lo, hice para que a futuro se puedan organizar y buscar las películas y los libros, por su categoría.
 ![](https://i.postimg.cc/T1fCfkW0/Imagen3.png)
 
