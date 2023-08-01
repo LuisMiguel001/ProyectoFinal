@@ -15,6 +15,7 @@ En el área de consultas puedes encontrar las recomendaciones ya hechas por otro
 ![](https://i.postimg.cc/T1fCfkW0/Imagen3.png)
 
 ![](https://i.postimg.cc/RhgQ9vmC/Imagen4.png)
+
 **Limitaciones:**
 La app todavía no puede dar una estadística de las películas y los libros más recomendado.
 La app todavía no registra ni limita usuario. NOTA: La autorización si esta coloca, pero ya que no puede colocarle la lógica para que registrara usuarios, decidí no restringir por Rol del usuario. Ya que si se logue diferente de  Usuario:admin@gmai.com Contraseña:admin, obtiene las mismas funciones.
