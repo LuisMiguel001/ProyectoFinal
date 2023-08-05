@@ -20,23 +20,43 @@
 
             <form>
                 <div class="input-group d-flex align-items-end">
-
-                    <InputSelect class="form-control col-2" @bind-Value="filtro">
+                    <InputSelect class="form-control col-2" @bind-Value="FiltroTitulo">
+                        <option value="0" hidden="hidden">[Seleccione]</option>
                         <option value="1">Titulo</option>
                         <option value="2">Fecha</option>
-                        <option value="3">Puntuaci&oacuten</option>
+                        <option value="3">Puntuación</option>
                     </InputSelect>
 
                     <div class="flex-fill mx-2">
 
-                        <div class="input-group">
-                            <label class="input-group-text"> Busqueda </label>
-                            <InputText class="form-control" @bind-Value="Criterio" />
-                        </div>
+                        @if (FiltroTitulo == "1")
+                        {
+                            <div class="input-group">
+                                <label class="input-group-text"> Titulo </label>
+                                <InputText class="form-control" @bind-Value="Criterio" />
+                            </div>
+                        }
 
+                        @if (FiltroTitulo == "2")
+                        {
+                            <div class="input-group">
+                                <label class="input-group-text"> Fecha </label>
+                                <InputDate class="form-control" @bind-Value="FiltroFecha" />
+                            </div>
+                        }
+
+                        @if (FiltroTitulo == "3")
+                        {
+                            <div class="input-group">
+                                <label class="input-group-text"> Puntuaci&oacuten 1/10 </label>
+                                <InputNumber class="form-control" min="1" max="10" @bind-Value="FiltroPuntuacion" />
+                            </div>
+                        }
                     </div>
 
-                    <button type="button" class="btn btn-sm-10 btn-primary" @onclick="Buscar"> <span class="oi oi-magnifying-glass"></span> Buscar </button>
+                    <button type="button" class="btn btn-sm-10 btn-primary" @onclick="Buscar">
+                        <span class="oi oi-magnifying-glass"></span> Buscar
+                    </button>
                 </div>
             </form>
 
@@ -92,6 +112,10 @@
 </div>
 
 @code {
+    public string? FiltroTitulo { get; set; }
+    public DateTime? FiltroFecha { get; set; }
+    public int? FiltroPuntuacion { get; set; }
+
     public List<Peliculas>? Pelicula { get; set; }
     public int conteo { get; set; }
     public string? filtro { get; set; }
@@ -105,6 +129,19 @@
     public async Task Buscar()
     {
         Pelicula = await httpClient.GetFromJsonAsync<List<Peliculas>>($"api/Peliculas");
+
+        if (FiltroTitulo != string.Empty && FiltroTitulo == "1")
+        {
+            Pelicula = Pelicula.Where(l => l.Titulo.Contains(Criterio, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+        else if (FiltroFecha != null && FiltroTitulo == "2")
+        {
+            Pelicula = Pelicula.Where(l => l.Fecha.Date == FiltroFecha.Value.Date).ToList();
+        }
+        else if (FiltroPuntuacion != null && FiltroTitulo == "3")
+        {
+            Pelicula = Pelicula.Where(l => l.Puntuacion == FiltroPuntuacion).ToList();
+        }
 
         conteo = Pelicula != null ? Pelicula!.Count() : 0;
         StateHasChanged();

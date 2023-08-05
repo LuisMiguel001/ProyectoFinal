@@ -101,7 +101,7 @@
 						<div Class="form-group">
 							<div class="input-group">
 								<span class="input-group-text">Puntuaci&oacuten 1/10</span>
-								<InputNumber @bind-Value="pelicula.Puntuacion" class="form-control"></InputNumber>
+								<InputNumber @bind-Value="pelicula.Puntuacion" class="form-control" min="1" max="10"></InputNumber>
 								<ValidationMessage For="@(() =>pelicula.Puntuacion)" />
 							</div>
 						</div>
@@ -128,7 +128,7 @@
 				<div class="row m-1">
 					@*TipoPelicula*@
 					<div class="col-md-6">
-						<label>Categoria: </label>
+						<label>G&eacutenero: </label>
 						<InputSelect @bind-Value="detalle.TipoPeliculaId" class="form-select">
 							<option value="@pelicula.TipoPeliculaId" hidden="hidden">[Seleccione]</option>
 							@foreach (var item in TiposPeliculasList)
@@ -361,11 +361,14 @@
 	public async Task AgregarDetalle()
 	{
 		var pelicula = await BuscarPeliculas(detalle.TipoPeliculaId);
-		if (pelicula != null)
+		if (ValidarDetalle())
 		{
-			detalle.PeliculaId = this.pelicula.PeliculaId;
-			this.pelicula.peliculaDetalle.Add(detalle);
-			detalle = new PeliculasDetalle();
+			if (pelicula != null)
+			{
+				detalle.PeliculaId = this.pelicula.PeliculaId;
+				this.pelicula.peliculaDetalle.Add(detalle);
+				detalle = new PeliculasDetalle();
+			}
 		}
 	}
 
@@ -379,16 +382,25 @@
 		pelicula.peliculaDetalle.Remove(detalle);
 	}
 
-	//public bool ValidarDetalle()
-	//{
-	//	if (detalle.Actores == string.Empty)
-	//	{
-	//		Mensaje = "Debe agregar el autor o en defecto colocarlo anonimo";
-	//	}
-	//	if (TipoPeliculaSeleccionado <= 0)
-	//	{
-	//		ValidacionDetalle = "El Tipo de Libro es obligatorio";
-	//	}
-	//	return ValidacionDetalle.Length == 0;
-	//}
+	public bool ValidarDetalle()
+	{
+		if (detalle.TipoPeliculaId >= 0 || detalle.Actores != string.Empty)
+		{
+			notificationService.ShowNotification(
+				titulo: "Exito",
+				mensaje: "Detalle Agregado",
+				NotificationSeverity.Success
+			);
+			return true;
+		}
+		else
+		{
+			notificationService.ShowNotification(
+				titulo: "Aviso!",
+				mensaje: "Asegurese de rellenar todos los campos del detalle!",
+				NotificationSeverity.Warning
+			);
+			return false;
+		}
+	}
 }
