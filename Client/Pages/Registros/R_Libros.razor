@@ -316,7 +316,7 @@
 			notificationService.ShowNotification(
 				titulo: "Aviso!",
 				mensaje: "La fecha debe ser la actual",
-				NotificationSeverity.Error
+				NotificationSeverity.Warning
 			);
 			return false;
 		}
@@ -359,29 +359,47 @@
 
 		return libro ?? new TipoLibro();
 	}
+	
+	public bool ValidarDetalle()
+	{
+		if (detalle.TipoId <= 0 || string.IsNullOrEmpty(detalle.Autor))
+		{
+			notificationService.ShowNotification(
+				titulo: "Aviso!",
+				mensaje: "Asegúrese de rellenar todos los campos del detalle!",
+				NotificationSeverity.Warning
+			);
+			return false;
+		}
 
-	//public bool ValidarDetalle()
-	//{
-	//	if (detalle.LibroId < 0 || detalle.Autor == string.Empty)
-	//	{
-	//		return false;
-	//	}
-	//	else
-	//	{
-	//		Mensaje = "Debe agregar el autor o en defecto colocarlo anonimo";
-	//		return true;
-	//	}
-	//}
+		return true;
+	}
 
 	public async Task AgregarDetalle()
 	{
-		var libro = await BuscarLibros(detalle.TipoId);
-
-		if (libro != null)
+		if (ValidarDetalle())
 		{
-			detalle.LibroId = this.libro.LibroId;
-			this.libro.libroDetalle.Add(detalle);
-			detalle = new LibrosDetalle();
+			var pelicula = await BuscarLibros(detalle.TipoId);
+			if (pelicula != null)
+			{
+				detalle.LibroId = this.libro.LibroId;
+				this.libro.libroDetalle.Add(detalle);
+				detalle = new LibrosDetalle();
+
+				notificationService.ShowNotification(
+					titulo: "Éxito",
+					mensaje: "Detalle Agregado",
+					NotificationSeverity.Success
+				);
+			}
+			else
+			{
+				notificationService.ShowNotification(
+					titulo: "Error",
+					mensaje: "Tipo de libro no válido. Asegúrese de seleccionar un Tipo de libro existente.",
+					NotificationSeverity.Error
+				);
+			}
 		}
 	}
 
@@ -394,17 +412,4 @@
 	{
 		libro.libroDetalle.Remove(detalle);
 	}
-
-	//public bool ValidarDetalle()
-	//{
-	//	if (detalle.Autor == string.Empty)
-	//	{
-	//		Mensaje = "Debe agregar el autor o en defecto colocarlo anonimo";
-	//	}
-	//	if (TipoLibroSeleccionado <= 0)
-	//	{
-	//		ValidacionDetalle = "El Tipo de Libro es obligatorio";
-	//	}
-	//	return ValidacionDetalle.Length == 0;
-	//}
 }

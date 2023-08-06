@@ -314,7 +314,7 @@
 			notificationService.ShowNotification(
 				titulo: "Aviso!",
 				mensaje: "La fecha debe ser la actual",
-				NotificationSeverity.Error
+				NotificationSeverity.Warning
 			);
 			return false;
 		}
@@ -358,16 +358,45 @@
 		return pelicula ?? new TipoPelicula();
 	}
 
+	public bool ValidarDetalle()
+	{
+		if (detalle.TipoPeliculaId <= 0 || string.IsNullOrEmpty(detalle.Actores))
+		{
+			notificationService.ShowNotification(
+				titulo: "Aviso!",
+				mensaje: "Asegúrese de rellenar todos los campos del detalle!",
+				NotificationSeverity.Warning
+			);
+			return false;
+		}
+
+		return true;
+	}
+
 	public async Task AgregarDetalle()
 	{
-		var pelicula = await BuscarPeliculas(detalle.TipoPeliculaId);
 		if (ValidarDetalle())
 		{
+			var pelicula = await BuscarPeliculas(detalle.TipoPeliculaId);
 			if (pelicula != null)
 			{
 				detalle.PeliculaId = this.pelicula.PeliculaId;
 				this.pelicula.peliculaDetalle.Add(detalle);
 				detalle = new PeliculasDetalle();
+
+				notificationService.ShowNotification(
+					titulo: "Éxito",
+					mensaje: "Detalle Agregado",
+					NotificationSeverity.Success
+				);
+			}
+			else
+			{
+				notificationService.ShowNotification(
+					titulo: "Error",
+					mensaje: "Tipo de película no válido. Asegúrese de seleccionar un Tipo de Película existente.",
+					NotificationSeverity.Error
+				);
 			}
 		}
 	}
@@ -380,27 +409,5 @@
 	public void RemoverDetalle(PeliculasDetalle detalle)
 	{
 		pelicula.peliculaDetalle.Remove(detalle);
-	}
-
-	public bool ValidarDetalle()
-	{
-		if (detalle.TipoPeliculaId >= 0 || detalle.Actores != string.Empty)
-		{
-			notificationService.ShowNotification(
-				titulo: "Exito",
-				mensaje: "Detalle Agregado",
-				NotificationSeverity.Success
-			);
-			return true;
-		}
-		else
-		{
-			notificationService.ShowNotification(
-				titulo: "Aviso!",
-				mensaje: "Asegurese de rellenar todos los campos del detalle!",
-				NotificationSeverity.Warning
-			);
-			return false;
-		}
 	}
 }
