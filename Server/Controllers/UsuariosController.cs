@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoFinal.Server.DAL;
+using ProyectoFinal.Server.Migrations.Usuarios;
 using ProyectoFinal.Shared.Models;
 
 namespace ProyectoFinal.Server.Controllers;
@@ -10,25 +11,51 @@ namespace ProyectoFinal.Server.Controllers;
 [ApiController]
 public class UsuariosController : ControllerBase
 {
+    private readonly UsuariosContext _context;
+
+	public UsuariosController(UsuariosContext context)
+	{
+		_context = context;
+	}
+
     [HttpPost]
     [Route("Login")]
     public async Task<IActionResult> Login([FromBody] Sesion login)
     {
-        LoginDTO sesionDTO = new LoginDTO();
+		var user = await _context.Usuarios.FirstOrDefaultAsync(u => u.Correo == login.Correo);
+		var dos = await _context.Usuarios.FirstOrDefaultAsync(u => u.Clave == login.Clave);
+		LoginDTO sesionDTO = new LoginDTO();
 
-        if (login.Correo == "admin@gmail.com" && login.Clave == "admin")
-        {
-            sesionDTO.Nombre = "admin";
-            sesionDTO.Correo = login.Correo;
-            sesionDTO.Rol = "Administrador";
-        }
-        else
-        {
-            sesionDTO.Nombre = "empleado";
-            sesionDTO.Correo = login.Correo;
-            sesionDTO.Rol = "Empleado";
-        }
-
-        return StatusCode(StatusCodes.Status200OK, sesionDTO);
+		if(user != null && dos != null) 
+		{
+			if (login.Correo == user.Correo && login.Clave == dos.Clave)
+			{
+				sesionDTO.Nombre = "admin";
+				sesionDTO.Correo = login.Correo;
+				sesionDTO.Rol = "Administrador";
+			}
+			return StatusCode(StatusCodes.Status200OK, sesionDTO);			
+		}
+		return null;
     }
+
+	//[HttpGet("{correo}")]
+	//public async Task<ActionResult<Usuarios>> GetUsuarios(string correo)
+	//{
+	//	if (_context.Usuarios == null)
+	//	{
+	//		return NotFound();
+	//	}
+	//	var usuario = _context.Usuarios
+	//	  .Where(l => l.Correo == correo)
+	//	  .AsNoTracking()
+	//	  .SingleOrDefault();
+
+	//	if (usuario == null)
+	//	{
+	//		return NotFound();
+	//	}
+
+	//	return usuario;
+	//}
 }

@@ -21,7 +21,7 @@
 .modo-rojo {
     /* Modo Rojo */
     --fondo: #6b0000;
-    --fondo-letra: black;
+    --fondo-letra: white;
     --fondo-resaltado: #7f0000;
     --fondo-resaltado-2: #8c0000;
     --link: #ff0000;
@@ -141,3 +141,4 @@ div.main{
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
     }
+

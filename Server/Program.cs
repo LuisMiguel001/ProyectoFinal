@@ -11,6 +11,9 @@ builder.Services.AddDbContextFactory<LibrosContext>(options => options.UseSqlite
 var ConPel = builder.Configuration.GetConnectionString("ConPel");
 builder.Services.AddDbContextFactory<PeliculasContext>(options => options.UseSqlite(ConPel));
 
+var Base = builder.Configuration.GetConnectionString("Base");
+builder.Services.AddDbContextFactory<UsuariosContext>(options => options.UseSqlite(Base));
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
