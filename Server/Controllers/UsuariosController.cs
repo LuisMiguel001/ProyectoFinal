@@ -38,24 +38,4 @@ public class UsuariosController : ControllerBase
 		}
 		return null;
     }
-
-	//[HttpGet("{correo}")]
-	//public async Task<ActionResult<Usuarios>> GetUsuarios(string correo)
-	//{
-	//	if (_context.Usuarios == null)
-	//	{
-	//		return NotFound();
-	//	}
-	//	var usuario = _context.Usuarios
-	//	  .Where(l => l.Correo == correo)
-	//	  .AsNoTracking()
-	//	  .SingleOrDefault();
-
-	//	if (usuario == null)
-	//	{
-	//		return NotFound();
-	//	}
-
-	//	return usuario;
-	//}
 }
