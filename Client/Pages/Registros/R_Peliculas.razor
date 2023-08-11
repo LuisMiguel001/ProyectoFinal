@@ -259,10 +259,11 @@
 
 	public async Task Guardar()
 	{
-		using var response = await httpClient.PostAsJsonAsync("api/Peliculas", pelicula);
 
 		if (Validar())
 		{
+			using var response = await httpClient.PostAsJsonAsync("api/Peliculas", pelicula);
+			
 			if (response.IsSuccessStatusCode)
 			{
 				var peliculaDevuelta = await response.Content.ReadFromJsonAsync<Peliculas>();

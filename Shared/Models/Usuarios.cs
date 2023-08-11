@@ -12,8 +12,10 @@ namespace PruebadeLogin.Shared.Models
 		[Key]
 		public int IdUsuario { get; set; }
 
+		[Required(ErrorMessage = "La credencial es incorrecta")]
 		public string Correo { get; set; }
-		
+
+		[Required(ErrorMessage = "La credencial es incorrecta")]
 		public string Clave { get; set; }
 	}
 }
