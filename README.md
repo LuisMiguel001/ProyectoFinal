@@ -2,6 +2,14 @@
 Proyecto Final AP1 (Luis Miguel Jerez Caceres).
 
 **Nombre de la App: QueRecomiendas
+
+![](https://i.postimg.cc/ZRHBTFKF/Imagen1login.png)
+
+Correo = app@gmail.com
+Clave = 123
+
+![](https://i.postimg.cc/B67SYhny/Imagen2registro.png)
+
 Uso:**
 Al ejecutar la aplicación esta se abrirá en el LOGIN en el cual hasta ahora puede entrar con cualquier usuario y contraseña, luego que pulse el botón de LOGIN serás dirigido a una pestaña de bienvenida donde se te mostrará un menú en la parte izquierda todo se encuentran las opciones de registrar y consultar libros y películas. 
 En la opción de registrar puedes agregar la imagen de tu película o/e libro que deseas recomendar, El titulo del mismo, agregar una reseña personal del motivo por el cual la recomiendas, la puntuación que le das y si deseas agregar un link para que la persona pueda encontrar la misma.
